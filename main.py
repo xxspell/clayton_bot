@@ -1,10 +1,12 @@
-from utils.config import load_config, version, icon_path
+from core.game import GameAutomation
+from core.http import HttpClient
+from utils.config import load_config, version, icon_path, common_headers
 from utils.terminal import set_command_line_title, set_console_icon
 
 config = load_config()
 
 if __name__ == "__main__":
-    set_command_line_title(version, None)
+    set_command_line_title(None)
     set_console_icon(icon_path)
     def print_welcome():
         title = f"Welcome to Clayton Bot v{version}"
@@ -38,4 +40,9 @@ if __name__ == "__main__":
         user_agent = config['SETTINGS']['user_agent']
         print(f"Init data: {init_data}")
         print(f"User Agent: {user_agent}")
-        input()
+
+        http_client = HttpClient(user_agent=user_agent, common_headers=common_headers)
+        game_automation = GameAutomation(http_client, init_data)
+        game_automation.run()
+    else:
+        print("Config is null")

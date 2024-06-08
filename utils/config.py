@@ -3,11 +3,21 @@ import os
 
 icon_path = "assets/icon.ico"
 version = "0.0.1"
-
-
+common_headers = {
+    'Connection': 'keep-alive',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Accept-Language': 'ru',
+    'Origin': 'https://tonclayton.fun',
+    'Host': 'tonclayton.fun',
+    'Referer': 'https://tonclayton.fun/',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Dest': 'empty'
+}
 def load_config():
 
-    config = configparser.ConfigParser()
+    config = configparser.RawConfigParser()
 
     if os.path.exists('config.ini'):
         config.read('config.ini')
