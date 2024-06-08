@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - '*'
+  workflow_dispatch: # Добавляем ручной запуск
+
 
 jobs:
   build:
