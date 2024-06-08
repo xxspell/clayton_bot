@@ -40,3 +40,5 @@ def create_config():
         config.write(configfile)
 
     print("A new config.ini file has been created. Please fill in your Init data and user agent.")
+    input("Enter to exit...")
+    exit()
