@@ -29,7 +29,7 @@ jobs:
         version=$(echo $GITHUB_REF | cut -d'/' -f3)
         pyinstaller --onefile main.py
         find . -name "main.exe"
-        mv ./dist/main.exe ./dist/main-v$version.exe
+        mv /home/runner/work/clayton_bot/clayton_bot/dist/main.exe /home/runner/work/clayton_bot/clayton_bot/dist/main-v$version.exe
 
     - name: Generate release description
       id: gen_release_desc
@@ -56,6 +56,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./dist/main-v${{ github.ref }}.exe
+        asset_path: /home/runner/work/clayton_bot/clayton_bot/dist/main-v${{ github.ref }}.exe
         asset_name: main-v${{ github.ref }}.exe
         asset_content_type: application/octet-stream
