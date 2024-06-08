@@ -1,8 +1,12 @@
 import configparser
 import os
 
+icon_path = "assets/icon.ico"
+version = "0.0.1"
+
 
 def load_config():
+
     config = configparser.ConfigParser()
 
     if os.path.exists('config.ini'):
