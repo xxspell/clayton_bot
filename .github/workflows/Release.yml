@@ -19,19 +19,18 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-
-    - name: Install dependencies
-      run: |
-        pip install pyinstaller
-
-    - name: Build executable
-      run: |
-        version=$(echo $GITHUB_REF | cut -d'/' -f3)
-        pyinstaller --onefile main.py
-        
-    - uses: actions/upload-artifact@v2
+    - uses: Nuitka/Nuitka-Action@main
       with:
-        path: dist/main.exe
+        nuitka-version: main
+        script-name: main.py
+        onefile: true
+
+        # Uploads artifact
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: exe
+        path: build/main.exe
 
     - name: Generate release description
       id: gen_release_desc
@@ -58,6 +57,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: dist/main.exe
-        asset_name: main-v${{ github.ref }}.exe
+        asset_path: build/main.exe
+        asset_name: claytonbot-v${{ github.ref }}.exe
         asset_content_type: application/octet-stream
