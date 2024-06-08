@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        pip install pyinstaller
+
+    - name: Build executable
+      run: |
+        version=$(echo $GITHUB_REF | cut -d'/' -f3)
+        pyinstaller --onefile main.py
+        
+    - uses: actions/upload-artifact@v2
+      with:
+        path: dist/main.exe
+
+    - name: Generate release description
+      id: gen_release_desc
+      run: |
+        COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:%s)
+        echo "### Changes\n\n$COMMITS" > release_description.txt
+
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body_path: ./release_description.txt
+        draft: false
+        prerelease: false
+
+    - name: Upload executable
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/main.exe
+        asset_name: main-v${{ github.ref }}.exe
+        asset_content_type: application/octet-stream
