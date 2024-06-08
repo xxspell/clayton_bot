@@ -4,7 +4,7 @@ on:
   push:
     tags:
       - '*'
-  workflow_dispatch: # Добавляем ручной запуск
+  workflow_dispatch:
 
 
 jobs:
@@ -23,14 +23,12 @@ jobs:
     - name: Install dependencies
       run: |
         pip install pyinstaller
-        # Добавьте другие необходимые зависимости
 
     - name: Build executable
       run: |
         version=$(echo $GITHUB_REF | cut -d'/' -f3)
         pyinstaller --onefile main.py
-        mv dist/main.exe dist/main-v$version.exe
-        # Добавьте другие необходимые команды для сборки и переименования файла
+        mv ./dist/main.exe ./dist/main-v$version.exe
 
     - name: Generate release description
       id: gen_release_desc
