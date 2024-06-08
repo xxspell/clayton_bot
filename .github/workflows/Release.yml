@@ -28,8 +28,7 @@ jobs:
       run: |
         version=$(echo $GITHUB_REF | cut -d'/' -f3)
         pyinstaller --onefile main.py
-        find . -name "main.exe"
-        mv dist/main.exe dist/main-v$version.exe
+        
     - uses: actions/upload-artifact@v2
       with:
         path: dist/main.exe
