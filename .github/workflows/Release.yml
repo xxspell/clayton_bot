@@ -38,17 +38,6 @@ jobs:
           build/*.bin
           build/*.app/**/*
 
-    - name: Generate release description
-      id: gen_release_desc
-      run: |
-        PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-        if [ -n "$PREV_TAG" ]; then
-          COMMITS=$(git log $PREV_TAG..HEAD --pretty=format:"%s")
-        else
-          COMMITS=$(git log --pretty=format:"%s")
-        fi
-        echo -e "### Changes\n\n$COMMITS" > release_description.txt
-
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -57,7 +46,7 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body_path: ./release_description.txt
+        body_path: "🤫"
         draft: false
         prerelease: false
 
