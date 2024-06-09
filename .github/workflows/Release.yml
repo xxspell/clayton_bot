@@ -8,11 +8,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: windows-latest
 
     steps:
     - name: Checkout repository
@@ -73,7 +69,5 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: |
           build/*.exe
-          build/*.bin
-          build/*.app
         asset_name: ${{ runner.os }}-build-${{ github.ref }}.${{ matrix.os == 'windows-latest' && 'exe' || matrix.os == 'macos-latest' && 'app' || 'bin' }}
         asset_content_type: application/octet-stream
