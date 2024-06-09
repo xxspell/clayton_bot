@@ -23,8 +23,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        if (Test-Path requirements.txt) { pip install -r requirements.txt }
+        pip install -r requirements.txt
 
     - name: Build Executable
       uses: Nuitka/Nuitka-Action@main
@@ -32,6 +31,7 @@ jobs:
         nuitka-version: main
         script-name: main.py
         onefile: true
+        standalone: true
         include-data-files: "requirements.txt"
 
     - name: Upload Artifacts
