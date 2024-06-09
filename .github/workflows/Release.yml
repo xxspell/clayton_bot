@@ -6,13 +6,11 @@ on:
       - '*'
   workflow_dispatch:
 
-
 jobs:
   build:
     strategy:
       matrix:
-        os: [ macos-latest, ubuntu-latest, windows-latest ]
-
+        os: [macos-latest, ubuntu-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
 
@@ -43,31 +41,33 @@ jobs:
           build/*.bin
           build/*.app/**/*
 
-#    - name: Generate release description
-#      id: gen_release_desc
-#      run: |
-#        COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:%s)
-#        echo "### Changes\n\n$COMMITS" > release_description.txt
-#
-#    - name: Create release
-#      id: create_release
-#      uses: actions/create-release@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        tag_name: ${{ github.ref }}
-#        release_name: Release ${{ github.ref }}
-#        body_path: ./release_description.txt
-#        draft: false
-#        prerelease: false
-#
-#    - name: Upload executable
-#      id: upload-release-asset
-#      uses: actions/upload-release-asset@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#      with:
-#        upload_url: ${{ steps.create_release.outputs.upload_url }}
-#        asset_path: build/main.exe
-#        asset_name: claytonbot-v${{ github.ref }}.exe
-#        asset_content_type: application/octet-stream
+    - name: Generate release description
+      id: gen_release_desc
+      run: |
+        COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:%s)
+        echo "### Changes\n\n$COMMITS" > release_description.txt
+
+    - name: Create release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        body_path: ./release_description.txt
+        draft: false
+        prerelease: false
+
+    - name: Upload executables
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: |
+          build/*.exe
+          build/*.bin
+          build/*.app
+        asset_name: ${{ runner.os }}-build-${{ github.ref }}.${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'app' || 'bin' }}
+        asset_content_type: application/octet-stream
