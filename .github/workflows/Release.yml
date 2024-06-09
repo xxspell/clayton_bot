@@ -21,13 +21,18 @@ jobs:
         architecture: 'x64'
         cache: 'pip'
 
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Build Executable
       uses: Nuitka/Nuitka-Action@main
       with:
         nuitka-version: main
         script-name: main.py
-        standalone: true
         onefile: true
+        include-data-files: "requirements.txt"
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
@@ -57,5 +62,5 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: |
           build/main.exe
-        asset_name: ${{ runner.os }}-build-${{ github.ref }}.${{ matrix.os == 'windows-latest' && 'exe' || matrix.os == 'macos-latest' && 'app' || 'bin' }}
+        asset_name: claytonbot-${{ runner.os }}-build-${{ github.ref }}.exe
         asset_content_type: application/octet-stream
