@@ -38,12 +38,6 @@ jobs:
           build/*.bin
           build/*.app/**/*
 
-    - name: Generate release description
-      id: gen_release_desc
-      run: |
-        COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:%s)
-        echo "### Changes\n\n$COMMITS" > release_description.txt
-
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
@@ -52,7 +46,6 @@ jobs:
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
-        body_path: ./release_description.txt
         draft: false
         prerelease: false
 
