@@ -31,7 +31,7 @@ jobs:
       uses: Nuitka/Nuitka-Action@main
       with:
         nuitka-version: main
-        script-name: main.exe
+        script-name: main.py
         onefile: true
 
     - name: Upload Artifacts
