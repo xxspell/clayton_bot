@@ -30,6 +30,7 @@ jobs:
       with:
         nuitka-version: main
         script-name: main.py
+        standalone: true
         onefile: true
 
     - name: Upload Artifacts
@@ -44,14 +45,19 @@ jobs:
     - name: Generate release description
       id: gen_release_desc
       run: |
-        COMMITS=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:%s)
-        echo "### Changes\n\n$COMMITS" > release_description.txt
+        PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+        if [ -n "$PREV_TAG" ]; then
+          COMMITS=$(git log $PREV_TAG..HEAD --pretty=format:"%s")
+        else
+          COMMITS=$(git log --pretty=format:"%s")
+        fi
+        echo -e "### Changes\n\n$COMMITS" > release_description.txt
 
     - name: Create release
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.OTHER_GITHUB_TOKEN }}
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
@@ -62,12 +68,12 @@ jobs:
     - name: Upload executables
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.OTHER_GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: |
           build/*.exe
           build/*.bin
           build/*.app
-        asset_name: ${{ runner.os }}-build-${{ github.ref }}.${{ runner.os == 'Windows' && 'exe' || runner.os == 'macOS' && 'app' || 'bin' }}
+        asset_name: ${{ runner.os }}-build-${{ github.ref }}.${{ matrix.os == 'windows-latest' && 'exe' || matrix.os == 'macos-latest' && 'app' || 'bin' }}
         asset_content_type: application/octet-stream
