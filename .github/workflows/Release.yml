@@ -56,6 +56,6 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: |
-          build/*.exe
+          build/main.exe
         asset_name: ${{ runner.os }}-build-${{ github.ref }}.${{ matrix.os == 'windows-latest' && 'exe' || matrix.os == 'macos-latest' && 'app' || 'bin' }}
         asset_content_type: application/octet-stream
